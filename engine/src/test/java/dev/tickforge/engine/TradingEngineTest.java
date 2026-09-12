@@ -93,4 +93,100 @@ class TradingEngineTest {
     row("4,202,TEST_A,TRADE,,,,,100,10");
     assertEquals("ARITHMETIC_OVERFLOW", engine.batch().transitions.getLast().reason());
   }
+
+  @Test
+  void timeoutBeforeQuoteAndZeroSizeCannotFill() {
+    row("1,1,TEST_A,QUOTE,99,20,101,20,,");
+    row("2,2,TEST_A,TRADE,,,,,100,10");
+    row("3,1002,TEST_A,QUOTE,99,20,101,20,,");
+    assertEquals("TIMEOUT", engine.batch().transitions.getLast().reason());
+    assertEquals(0, engine.state().fillCount);
+    row("4,1003,TEST_A,TRADE,,,,,100,10");
+    row("5,1004,TEST_A,QUOTE,99,20,101,0,,");
+    assertEquals("IOC_NO_FILL", engine.batch().transitions.getLast().reason());
+    assertEquals(100000, engine.state().cash);
+  }
+
+  @Test
+  void quarantineStillEnforcesGapAndAllowsExplicitDiagnosticMode() {
+    var c = config();
+    var diagnostic =
+        new RunConfig(
+            c.initialCash(),
+            c.feePerShare(),
+            c.orderQuantity(),
+            c.maxOrderQuantity(),
+            c.maxPosition(),
+            c.quoteFreshnessNs(),
+            c.latencyNs(),
+            c.timeoutNs(),
+            c.buySlippageTicks(),
+            true,
+            false,
+            c.symbols());
+    var e = new TradingEngine(diagnostic, new EngineState(c.initialCash()));
+    e.process(CsvEventReader.parse(1, "garbage", c.symbols().keySet()));
+    assertEquals(2, e.state().nextIndex);
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            e.process(
+                CsvEventReader.parse(2, "2,1,TEST_A,TRADE,,,,,100,10", c.symbols().keySet())));
+    assertEquals(2, e.state().nextIndex);
+    var gaps =
+        new RunConfig(
+            c.initialCash(),
+            c.feePerShare(),
+            c.orderQuantity(),
+            c.maxOrderQuantity(),
+            c.maxPosition(),
+            c.quoteFreshnessNs(),
+            c.latencyNs(),
+            c.timeoutNs(),
+            c.buySlippageTicks(),
+            true,
+            true,
+            c.symbols());
+    var tolerant = new TradingEngine(gaps, new EngineState(c.initialCash()));
+    tolerant.process(
+        CsvEventReader.parse(1, "5,1,TEST_A,QUOTE,99,1,101,1,,", c.symbols().keySet()));
+    assertEquals("TEST_ONLY_GAP_TOLERATED", tolerant.batch().outcomes.getFirst().reason());
+  }
+
+  @Test
+  void cashAndPositionAreRecheckedAcrossOutstandingSymbols() {
+    var c =
+        new RunConfig(
+            1500,
+            2,
+            10,
+            10,
+            10,
+            1000,
+            0,
+            10000,
+            0,
+            false,
+            false,
+            Map.of(
+                "TEST_A",
+                new RunConfig.Threshold(100, 120),
+                "TEST_B",
+                new RunConfig.Threshold(100, 120)));
+    var e = new TradingEngine(c, new EngineState(c.initialCash()));
+    var lines =
+        List.of(
+            "1,1,TEST_A,QUOTE,99,20,100,20,,",
+            "2,2,TEST_B,QUOTE,99,20,100,20,,",
+            "3,3,TEST_A,TRADE,,,,,100,10",
+            "4,4,TEST_B,TRADE,,,,,100,10",
+            "5,5,TEST_A,QUOTE,99,20,100,20,,",
+            "6,6,TEST_B,QUOTE,99,20,100,20,,");
+    for (int i = 0; i < lines.size(); i++)
+      e.process(CsvEventReader.parse(i + 1, lines.get(i), c.symbols().keySet()));
+    assertEquals(72, e.state().cash);
+    assertEquals(10, e.state().positions.get("TEST_A").quantity());
+    assertEquals(4, e.state().positions.get("TEST_B").quantity());
+    assertTrue(e.state().pending.isEmpty());
+  }
 }

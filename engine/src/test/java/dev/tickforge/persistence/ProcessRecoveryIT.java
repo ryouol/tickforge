@@ -181,4 +181,54 @@ class ProcessRecoveryIT {
     }
     assertEquals(report("batch-base"), report("paced"));
   }
+
+  @Test
+  void gracefulShutdownWriterExclusionAndChangedConfiguration() throws Exception {
+    success("shutdown-baseline", "replay");
+    Process child = start("shutdown", "replay", Map.of(), "--speed", "0.2");
+    try {
+      assertTimeoutPreemptively(
+          Duration.ofSeconds(20),
+          () -> {
+            while (true) {
+              assertTrue(child.isAlive());
+              try (Connection c =
+                      DriverManager.getConnection(
+                          DB.getJdbcUrl(), DB.getUsername(), DB.getPassword());
+                  var statement =
+                      c.prepareStatement(
+                          "SELECT next_index FROM checkpoints WHERE run_id='shutdown'");
+                  var result = statement.executeQuery()) {
+                if (result.next() && result.getLong(1) >= 8) break;
+              }
+              Thread.sleep(20);
+            }
+          });
+      Process second = start("shutdown", "replay", Map.of());
+      try {
+        assertTrue(second.waitFor(10, TimeUnit.SECONDS));
+        assertNotEquals(0, second.exitValue());
+        assertTrue(
+            Files.readString(dir.resolve("shutdown-replay.log")).contains("already has a writer"));
+      } finally {
+        second.destroyForcibly();
+      }
+      child.destroy();
+      assertTrue(child.waitFor(10, TimeUnit.SECONDS));
+    } finally {
+      child.destroyForcibly();
+    }
+    Path changed = dir.resolve("changed.yaml");
+    Files.writeString(
+        changed, Files.readString(config).replace("feePerShare: 10", "feePerShare: 11"));
+    Process incompatible = start("shutdown", "resume", Map.of(), "--config", changed.toString());
+    try {
+      assertTrue(incompatible.waitFor(10, TimeUnit.SECONDS));
+      assertNotEquals(0, incompatible.exitValue());
+    } finally {
+      incompatible.destroyForcibly();
+    }
+    success("shutdown", "resume");
+    assertEquals(report("shutdown-baseline"), report("shutdown"));
+  }
 }
