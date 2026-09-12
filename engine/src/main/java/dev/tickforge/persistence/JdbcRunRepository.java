@@ -191,7 +191,17 @@ public final class JdbcRunRepository implements RunRepository {
     if (point.equals(requested)
             && state.nextIndex
                 >= Long.parseLong(System.getenv().getOrDefault("TICKFORGE_FAULT_INDEX", "2"))
-        || ("eof-" + point).equals(requested) && state.finalized) Runtime.getRuntime().halt(86);
+        || ("eof-" + point).equals(requested) && state.finalized) {
+      if ("barrier".equals(System.getenv("TICKFORGE_FAULT_MODE"))) {
+        try {
+          java.nio.file.Files.writeString(Path.of(System.getenv("TICKFORGE_FAULT_MARKER")), point);
+        } catch (IOException e) {
+          throw new IllegalStateException(e);
+        }
+        while (true) java.util.concurrent.locks.LockSupport.parkNanos(10000000);
+      }
+      Runtime.getRuntime().halt(86);
+    }
   }
 
   public String canonicalReport() throws SQLException {
