@@ -1,0 +1,31 @@
+{
+  "os": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "architecture": "x86_64",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "logicalCpus": 2,
+  "memoryBytes": 8323973120,
+  "java": "openjdk version \"21.0.9\" 2025-10-21 LTS\nOpenJDK Runtime Environment Temurin-21.0.9+10 (build 21.0.9+10-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.9+10 (build 21.0.9+10-LTS, mixed mode, sharing)",
+  "gitCommit": "d665f3243e96e924282d173006dba38b9b3617c6",
+  "workingTree": "",
+  "buildSha256": "4331a37f0d7f0d2c2f924e9a26014b254683f3705e5fae139879ae8d5de52e98",
+  "manifest": {
+    "formatVersion": 1,
+    "generatorVersion": "tickforge-synthetic-1",
+    "seed": 42,
+    "recordCount": 3000,
+    "symbols": [
+      "TEST_A",
+      "TEST_B"
+    ],
+    "priceScale": 10000,
+    "sha256": "bdb9cf460ff4fa74559e1f1240c71c9ed60b89e8f4448e3cf09b8c14bf1997ca",
+    "provenance": "Synthetic fictional data; CC0-1.0"
+  },
+  "heap": "-Xms256m -Xmx256m",
+  "gc": "JDK default (G1)",
+  "database": "PostgreSQL 17.6 in local Docker; synchronous JDBC commits",
+  "strictness": "strict gaps and malformed rows",
+  "warmup": "one full unreported replay",
+  "repeats": 3,
+  "dateUtc": "2026-09-12T22:46:42Z"
+}

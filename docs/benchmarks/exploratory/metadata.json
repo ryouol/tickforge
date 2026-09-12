@@ -1,0 +1,29 @@
+{
+  "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "architecture": "arm64",
+  "cpu": "Apple M1 Pro",
+  "java": "openjdk version \"21.0.9\" 2025-10-21\nOpenJDK Runtime Environment Homebrew (build 21.0.9)\nOpenJDK 64-Bit Server VM Homebrew (build 21.0.9, mixed mode, sharing)",
+  "gitCommit": "798d783db325a458a189e3f88c1916529e78efe7",
+  "workingTree": "M Dockerfile\n M pom.xml\n?? benchmarks/\n?? scripts/benchmark.py\n?? scripts/benchmark.sh",
+  "buildSha256": "f6fc7559827ee91f7ddc0151b572d0838da26befe8da81a88cc73fe849c22701",
+  "manifest": {
+    "formatVersion": 1,
+    "generatorVersion": "tickforge-synthetic-1",
+    "seed": 42,
+    "recordCount": 3000,
+    "symbols": [
+      "TEST_A",
+      "TEST_B"
+    ],
+    "priceScale": 10000,
+    "sha256": "bdb9cf460ff4fa74559e1f1240c71c9ed60b89e8f4448e3cf09b8c14bf1997ca",
+    "provenance": "Synthetic fictional data; CC0-1.0"
+  },
+  "heap": "-Xms256m -Xmx256m",
+  "gc": "JDK default (G1)",
+  "database": "PostgreSQL 17.6 in local Docker; synchronous JDBC commits",
+  "strictness": "strict gaps and malformed rows",
+  "warmup": "one full unreported replay",
+  "repeats": 3,
+  "dateUtc": "2026-09-12T22:13:34Z"
+}

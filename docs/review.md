@@ -1,0 +1,37 @@
+# Final all-code review
+
+Reviewed the complete implementation in final integration [PR #7](https://github.com/ryouol/tickforge/pull/7), including the six preceding stacked stages. Review fixes are pinned below to commit `5f5d8a2a138597ef4e1b1d94723ac5ff3139a885` (or the relevant original stage).
+
+The simplify skill covered reuse, quality and efficiency. Reuse and efficiency were independently reviewed by a subagent; the primary agent performed the quality pass when disk exhaustion prevented additional sessions. The code-review skill ran all four applicable skill passes at xhigh: breaking changes, testing, change size, and model-visible context. The context pass reused an existing reviewer session after a new session failed to initialize. No model-context rules apply because this engine does not construct model prompts or inference history.
+
+All reported findings are retained below. Reviewers rechecked the fixes remotely, and the cleanup commit passed Linux Maven verification and Docker replay. No GitHub review comments were posted. The repository owner is the PR author, so the final PR carries the `code-reviewed` label; this records review, not a merge approval.
+
+1. **Fixed — Malformed rows initialized pacing at timestamp zero, causing epoch-timestamp data to wait for years in paced mode.** [engine/src/main/java/dev/tickforge/engine/ReplayRunner.java:99](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/main/java/dev/tickforge/engine/ReplayRunner.java#L99). Malformed envelopes bypass the replay clock; the regression starts with malformed input followed by an epoch timestamp.
+
+2. **Fixed — SIGTERM coverage did not prove that the current partial batch was committed before recovery.** [engine/src/test/java/dev/tickforge/persistence/ProcessRecoveryIT.java:170](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/test/java/dev/tickforge/persistence/ProcessRecoveryIT.java#L170). The test holds input behind a 100-second gap, observes row 9 processed, then verifies checkpoint 10 and nine durable outcomes before resume.
+
+3. **Fixed — Nonzero simulated execution latency had no coverage.** [engine/src/test/java/dev/tickforge/engine/TradingEngineTest.java:194](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/test/java/dev/tickforge/engine/TradingEngineTest.java#L194). A quote before eligibility leaves the order pending; a quote exactly at eligibility fills it.
+
+4. **Fixed — Order-size, position and capped-price-plus-fee acceptance limits lacked boundary tests.** [engine/src/test/java/dev/tickforge/engine/TradingEngineTest.java:235](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/test/java/dev/tickforge/engine/TradingEngineTest.java#L235). Tests assert each rejection reason and unchanged financial state, plus exact-cash acceptance.
+
+5. **Fixed — The strict malformed-record test exercised only a sequence gap.** [engine/src/test/java/dev/tickforge/engine/TradingEngineTest.java:226](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/test/java/dev/tickforge/engine/TradingEngineTest.java#L226). A malformed record after valid input now proves checkpoint, sequence and outcome count stay unchanged.
+
+6. **Fixed — Publication tests did not establish that financial snapshots follow a successful commit.** [engine/src/test/java/dev/tickforge/engine/ReplayRunnerTest.java:132](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/test/java/dev/tickforge/engine/ReplayRunnerTest.java#L132). Latches block a commit and release it into failure; both phases must publish nothing.
+
+7. **Fixed — The paced integration test duplicated the existing process-success helper.** [engine/src/test/java/dev/tickforge/persistence/ProcessRecoveryIT.java:165](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/test/java/dev/tickforge/persistence/ProcessRecoveryIT.java#L165). It now reuses success(...), including timeout diagnostics and process cleanup.
+
+8. **Fixed — Prometheus calculated histogram percentiles and discarded them.** [engine/src/main/java/dev/tickforge/ops/Metrics.java:97](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/main/java/dev/tickforge/ops/Metrics.java#L97). The endpoint now exports all computed histogram statistics, along with operational and committed-outcome counters.
+
+9. **Fixed — Every ledger row prepared and executed a separate JDBC statement.** [engine/src/main/java/dev/tickforge/persistence/JdbcRunRepository.java:105](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/main/java/dev/tickforge/persistence/JdbcRunRepository.java#L105). Each table uses a prepared batch while preserving transaction and fault boundaries.
+
+10. **Fixed — Every batch rewrote unchanged account/position rows and RUNNING status.** [engine/src/main/java/dev/tickforge/persistence/JdbcRunRepository.java:167](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/main/java/dev/tickforge/persistence/JdbcRunRepository.java#L167). IS DISTINCT FROM guards avoid no-op updates; run status changes only at completion.
+
+11. **Fixed — Canonical CLI reports accumulated all history in memory.** [engine/src/main/java/dev/tickforge/persistence/JdbcRunRepository.java:242](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/main/java/dev/tickforge/persistence/JdbcRunRepository.java#L242). Reports use a transactional cursor and streaming JSON; benchmark hashing also uses bounded chunks. A string helper remains only for tiny tests.
+
+12. **Advisory retained — PR #1 combines 1,339 changed lines, including 487 mechanical wrapper lines.** [engine/src/main/java/dev/tickforge/engine/TradingEngine.java:13](https://github.com/ryouol/tickforge/blob/1f09cad/engine/src/main/java/dev/tickforge/engine/TradingEngine.java#L13). Review bootstrap first (508 lines), then data/config/parser tests (345), then the deterministic core (486). Existing published history is preserved.
+
+13. **Advisory retained — PR #3 combines 616 lines of lifecycle and application wiring.** [engine/src/main/java/dev/tickforge/cli/Main.java:76](https://github.com/ryouol/tickforge/blob/fe7d533/engine/src/main/java/dev/tickforge/cli/Main.java#L76). Review metrics/status first (141), bounded runner/scheduler/tests (262), then CLI/build identity/repository wiring (213).
+
+14. **Advisory retained — The cleanup commit contains 634 changed lines; the final delta beyond PR #6 reached 792.** [engine/src/main/java/dev/tickforge/persistence/JdbcRunRepository.java:242](https://github.com/ryouol/tickforge/blob/5f5d8a2a138597ef4e1b1d94723ac5ff3139a885/engine/src/main/java/dev/tickforge/persistence/JdbcRunRepository.java#L242). Review independent trading tests (70 additions), replay/metrics tests and behavior (~300 changed lines), then persistence/report streaming and callers (~264). The final PR intentionally integrates the earlier stack.
+
+The three size notes are advisory review/staging concerns, not unresolved runtime defects. The existing stack preserves actual development history without backdated commits. Historical benchmark checksums excluded the terminal newline; the streaming harness includes it. Compare checksums within one recorded build/report format.
