@@ -1,0 +1,549 @@
+Run 0
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-5f3e6a14bf5346c6 --batch-size 100 --queue-capacity 8192 --speed 0"
+	User time (seconds): 2.59
+	System time (seconds): 0.12
+	Percent of CPU this job got: 142%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.90
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 130432
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14196
+	Voluntary context switches: 2118
+	Involuntary context switches: 2934
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 1
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-6f87696a920e4d48 --batch-size 1 --queue-capacity 8192 --speed 0"
+	User time (seconds): 4.62
+	System time (seconds): 0.85
+	Percent of CPU this job got: 69%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.85
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 156748
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 17630
+	Voluntary context switches: 26428
+	Involuntary context switches: 17118
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 2
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-17b7a115c9274020 --batch-size 100 --queue-capacity 8192 --speed 0"
+	User time (seconds): 2.67
+	System time (seconds): 0.14
+	Percent of CPU this job got: 138%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.03
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 148748
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14489
+	Voluntary context switches: 2121
+	Involuntary context switches: 3307
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 3
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-ca9a327967474150 --batch-size 1000 --queue-capacity 8192 --speed 0"
+	User time (seconds): 2.57
+	System time (seconds): 0.14
+	Percent of CPU this job got: 142%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.90
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 131188
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14886
+	Voluntary context switches: 1972
+	Involuntary context switches: 2505
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 4
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-0582bb5ee17a4509 --batch-size 100 --queue-capacity 1024 --speed 0"
+	User time (seconds): 2.60
+	System time (seconds): 0.13
+	Percent of CPU this job got: 142%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.92
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 148364
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14177
+	Voluntary context switches: 1983
+	Involuntary context switches: 3617
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 5
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-b61c59f98bfe4609 --batch-size 100 --queue-capacity 65536 --speed 0"
+	User time (seconds): 2.74
+	System time (seconds): 0.13
+	Percent of CPU this job got: 143%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.99
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 147096
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14690
+	Voluntary context switches: 2065
+	Involuntary context switches: 3243
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 6
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-7a9fb8526c3b4123 --batch-size 100 --queue-capacity 8192 --speed 20"
+	User time (seconds): 3.01
+	System time (seconds): 0.16
+	Percent of CPU this job got: 121%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.61
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 143256
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 21016
+	Voluntary context switches: 5987
+	Involuntary context switches: 4412
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 7
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-69640173664b417e --batch-size 100 --queue-capacity 8192 --speed 100"
+	User time (seconds): 2.73
+	System time (seconds): 0.17
+	Percent of CPU this job got: 144%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.01
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 142176
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 21424
+	Voluntary context switches: 2913
+	Involuntary context switches: 4277
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 8
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-200cada4a94f4800 --batch-size 1 --queue-capacity 8192 --speed 0"
+	User time (seconds): 4.46
+	System time (seconds): 0.81
+	Percent of CPU this job got: 66%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.98
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 154040
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 16633
+	Voluntary context switches: 26906
+	Involuntary context switches: 14312
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 9
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-7622cb4015d4452e --batch-size 100 --queue-capacity 8192 --speed 0"
+	User time (seconds): 2.59
+	System time (seconds): 0.12
+	Percent of CPU this job got: 138%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.95
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 150592
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14491
+	Voluntary context switches: 2151
+	Involuntary context switches: 2693
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 10
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-a670c7faa95546f2 --batch-size 1000 --queue-capacity 8192 --speed 0"
+	User time (seconds): 2.43
+	System time (seconds): 0.12
+	Percent of CPU this job got: 140%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.82
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 129900
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14151
+	Voluntary context switches: 1872
+	Involuntary context switches: 2163
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 11
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-266d8f2699964c5e --batch-size 100 --queue-capacity 1024 --speed 0"
+	User time (seconds): 2.65
+	System time (seconds): 0.12
+	Percent of CPU this job got: 141%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.96
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 129624
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14203
+	Voluntary context switches: 2195
+	Involuntary context switches: 3370
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 12
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-0dc84812cfe04d64 --batch-size 100 --queue-capacity 65536 --speed 0"
+	User time (seconds): 2.70
+	System time (seconds): 0.14
+	Percent of CPU this job got: 132%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.14
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 161492
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 22099
+	Voluntary context switches: 2373
+	Involuntary context switches: 3069
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 13
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-a5082d91f99f49d3 --batch-size 100 --queue-capacity 8192 --speed 20"
+	User time (seconds): 2.91
+	System time (seconds): 0.23
+	Percent of CPU this job got: 124%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.54
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 159424
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 21632
+	Voluntary context switches: 6051
+	Involuntary context switches: 4235
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 14
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-ca239a8db5bf4da2 --batch-size 100 --queue-capacity 8192 --speed 100"
+	User time (seconds): 2.64
+	System time (seconds): 0.13
+	Percent of CPU this job got: 141%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.96
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 149292
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14708
+	Voluntary context switches: 2750
+	Involuntary context switches: 3276
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 15
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-dcf4f73d88334346 --batch-size 1 --queue-capacity 8192 --speed 0"
+	User time (seconds): 4.60
+	System time (seconds): 0.84
+	Percent of CPU this job got: 69%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.83
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 159460
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 22066
+	Voluntary context switches: 26592
+	Involuntary context switches: 16175
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 16
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-752f6e4cd32b45c9 --batch-size 100 --queue-capacity 8192 --speed 0"
+	User time (seconds): 2.61
+	System time (seconds): 0.12
+	Percent of CPU this job got: 140%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.95
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 130524
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 15184
+	Voluntary context switches: 2161
+	Involuntary context switches: 2964
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 17
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-a2b20ac5f0e14599 --batch-size 1000 --queue-capacity 8192 --speed 0"
+	User time (seconds): 2.54
+	System time (seconds): 0.11
+	Percent of CPU this job got: 142%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.86
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 148812
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14908
+	Voluntary context switches: 2042
+	Involuntary context switches: 2781
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 18
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-54b1ece7448b43ea --batch-size 100 --queue-capacity 1024 --speed 0"
+	User time (seconds): 2.64
+	System time (seconds): 0.13
+	Percent of CPU this job got: 139%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.98
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 150736
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14989
+	Voluntary context switches: 2340
+	Involuntary context switches: 3495
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 19
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-3b2ccedfa35440b9 --batch-size 100 --queue-capacity 65536 --speed 0"
+	User time (seconds): 2.64
+	System time (seconds): 0.14
+	Percent of CPU this job got: 138%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.00
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 128520
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14444
+	Voluntary context switches: 2017
+	Involuntary context switches: 3127
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 20
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-99015d388651417c --batch-size 100 --queue-capacity 8192 --speed 20"
+	User time (seconds): 3.04
+	System time (seconds): 0.15
+	Percent of CPU this job got: 126%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.52
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 161560
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 20967
+	Voluntary context switches: 5976
+	Involuntary context switches: 4503
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+Run 21
+	Command being timed: "/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.9-10.0.LTS/x64/bin/java -Xms256m -Xmx256m -jar engine/target/engine-1.0.0-SNAPSHOT.jar replay --input data/benchmark-ci/events.csv --run-id bench-766eadab8f7d4539 --batch-size 100 --queue-capacity 8192 --speed 100"
+	User time (seconds): 2.64
+	System time (seconds): 0.14
+	Percent of CPU this job got: 140%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.99
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 150772
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 14371
+	Voluntary context switches: 2960
+	Involuntary context switches: 3758
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

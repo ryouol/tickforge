@@ -1,0 +1,30 @@
+                                                               QUERY PLAN                                                                
+-----------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=823.25..824.27 rows=409 width=375) (actual time=0.696..0.715 rows=427 loops=1)
+   Sort Key: orders.trigger_index
+   Sort Method: quicksort  Memory: 192kB
+   Buffers: shared hit=64
+   InitPlan 1
+     ->  Limit  (cost=13.88..13.89 rows=1 width=40) (actual time=0.109..0.110 rows=1 loops=1)
+           Buffers: shared hit=8
+           ->  Sort  (cost=13.88..13.89 rows=2 width=40) (actual time=0.108..0.109 rows=1 loops=1)
+                 Sort Key: runs.created_at
+                 Sort Method: top-N heapsort  Memory: 25kB
+                 Buffers: shared hit=8
+                 ->  Seq Scan on runs  (cost=0.00..13.88 rows=2 width=40) (actual time=0.015..0.063 rows=22 loops=1)
+                       Filter: (run_id ~~ 'bench-%'::text)
+                       Rows Removed by Filter: 1
+                       Buffers: shared hit=5
+   ->  Bitmap Heap Scan on orders  (cost=24.60..791.62 rows=409 width=375) (actual time=0.211..0.442 rows=427 loops=1)
+         Recheck Cond: ((run_id = (InitPlan 1).col1) AND (symbol = 'TEST_A'::text))
+         Heap Blocks: exact=46
+         Buffers: shared hit=61
+         ->  Bitmap Index Scan on orders_symbol_history  (cost=0.00..24.50 rows=409 width=0) (actual time=0.195..0.195 rows=427 loops=1)
+               Index Cond: ((run_id = (InitPlan 1).col1) AND (symbol = 'TEST_A'::text))
+               Buffers: shared hit=15
+ Planning:
+   Buffers: shared hit=219 read=6
+ Planning Time: 2.056 ms
+ Execution Time: 0.866 ms
+(26 rows)
+
