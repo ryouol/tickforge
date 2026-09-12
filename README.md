@@ -15,7 +15,7 @@ docker compose up -d --wait db
 ./scripts/demo.sh
 ```
 
-Keep that password in your shell or an ignored `.env` file for Compose; Java reads environment variables, so export it before CLI commands. PostgreSQL binds only to `127.0.0.1:55432`. Existing volumes retain their original password. The scripts do not delete your database.
+Keep that password in your shell or an ignored `.env` file for Compose; Java reads environment variables, so export it before CLI commands. PostgreSQL binds only to localhost (`55432` by default). Set `TICKFORGE_DB_PORT` and the matching `TICKFORGE_DB_URL` if that port is occupied. Existing volumes retain their original password. The scripts do not delete your database.
 
 ```sh
 mkdir -p data
@@ -44,7 +44,7 @@ Database variables: `TICKFORGE_DB_URL` (default `jdbc:postgresql://localhost:554
 
 ## Inspect and reproduce
 
-With `--port 8080`, inspect localhost `/health/live`, `/health/ready`, `/status`, `/metrics`, and `/metrics.json`. `/status` contains only committed financial state; counters and timings are live operational observations. Histograms report p50/p95/p99/max in nanoseconds, capped at one hour. Admission starts before a potentially blocked queue offer, so latency includes backpressure and batch flush waits. Paced scheduled-arrival latency separately includes missed schedule time.
+With `--port 8080`, inspect localhost `/health/live`, `/health/ready`, `/status`, `/metrics`, and `/metrics.json`. `/status` contains only committed financial state; counters and timings are live operational observations. Both metrics endpoints expose histogram statistics and committed outcome counters. Live `processedIndex` may be ahead of `lastCommittedIndex`; `actualOfferedPerSecond` measures the producer's admission span. Histograms report p50/p95/p99/max in nanoseconds, capped at one hour. Admission starts before a potentially blocked queue offer, so latency includes backpressure and batch flush waits. Paced scheduled-arrival latency separately includes missed schedule time.
 
 Example local alert: investigate any increase in `tickforge_commitFailures`, or a running, ready replay whose committed count remains unchanged for 30 seconds while the queue is nonempty. This is a documented example, not a production monitoring claim.
 

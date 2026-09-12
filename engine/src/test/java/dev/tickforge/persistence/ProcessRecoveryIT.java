@@ -162,46 +162,64 @@ class ProcessRecoveryIT {
   void batchAndPacingDoNotChangeLedger() throws Exception {
     success("batch-base", "replay");
 
-    Process child =
-        start(
-            "paced",
-            "replay",
-            Map.of(),
-            "--speed",
-            "1000",
-            "--batch-size",
-            "100",
-            "--queue-capacity",
-            "4");
-    try {
-      assertTrue(child.waitFor(30, TimeUnit.SECONDS));
-      assertEquals(0, child.exitValue());
-    } finally {
-      child.destroyForcibly();
-    }
+    success("paced", "replay", "--speed", "1000", "--batch-size", "100", "--queue-capacity", "4");
     assertEquals(report("batch-base"), report("paced"));
   }
 
   @Test
   void gracefulShutdownWriterExclusionAndChangedConfiguration() throws Exception {
+    List<String> lines = Files.readAllLines(input);
+    for (int i = 10; i < lines.size(); i++) {
+      String[] fields = lines.get(i).split(",", -1);
+      fields[1] = Long.toString(Long.parseLong(fields[1]) + 100000000000L);
+      lines.set(i, String.join(",", fields));
+    }
+    Files.write(input, lines);
+    Path manifestPath = Path.of(input + ".manifest.json");
+    var original = Json.decode(Files.readString(manifestPath), DatasetManifest.class);
+    Files.writeString(
+        manifestPath,
+        Json.encode(
+            new DatasetManifest(
+                original.formatVersion(),
+                original.generatorVersion(),
+                original.seed(),
+                original.recordCount(),
+                original.symbols(),
+                original.priceScale(),
+                DatasetManifest.hash(input),
+                original.provenance())));
     success("shutdown-baseline", "replay");
-    Process child = start("shutdown", "replay", Map.of(), "--speed", "0.2");
+    Process child = start("shutdown", "replay", Map.of(), "--speed", "1");
     try {
+      var port = new java.util.concurrent.atomic.AtomicInteger();
       assertTimeoutPreemptively(
           Duration.ofSeconds(20),
           () -> {
-            while (true) {
+            while (port.get() == 0) {
               assertTrue(child.isAlive());
-              try (Connection c =
-                      DriverManager.getConnection(
-                          DB.getJdbcUrl(), DB.getUsername(), DB.getPassword());
-                  var statement =
-                      c.prepareStatement(
-                          "SELECT next_index FROM checkpoints WHERE run_id='shutdown'");
-                  var result = statement.executeQuery()) {
-                if (result.next() && result.getLong(1) >= 8) break;
+              String log = Files.readString(dir.resolve("shutdown-replay.log"));
+              if (log.contains("\n"))
+                port.set(
+                    Json.MAPPER
+                        .readTree(log.lines().findFirst().orElseThrow())
+                        .get("port")
+                        .asInt());
+              else Thread.sleep(10);
+            }
+            try (var client = java.net.http.HttpClient.newHttpClient()) {
+              var request =
+                  java.net.http.HttpRequest.newBuilder(
+                          java.net.URI.create("http://127.0.0.1:" + port.get() + "/metrics.json"))
+                      .build();
+              while (true) {
+                var response =
+                    client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+                if (Json.MAPPER.readTree(response.body()).get("processedIndex").asLong() == 9)
+                  break;
+                assertTrue(child.isAlive());
+                Thread.sleep(10);
               }
-              Thread.sleep(20);
             }
           });
       Process second = start("shutdown", "replay", Map.of());
@@ -217,6 +235,16 @@ class ProcessRecoveryIT {
       assertTrue(child.waitFor(10, TimeUnit.SECONDS));
     } finally {
       child.destroyForcibly();
+    }
+    try (var repository =
+        new JdbcRunRepository(
+            DriverManager.getConnection(DB.getJdbcUrl(), DB.getUsername(), DB.getPassword()),
+            "shutdown")) {
+      var state = repository.load();
+      assertFalse(state.finalized);
+      assertEquals(
+          10, state.nextIndex, "SIGTERM must commit processed rows 8 and 9 from the partial batch");
+      assertEquals(9, Json.MAPPER.readTree(repository.canonicalReport()).get("outcomes").size());
     }
     Path changed = dir.resolve("changed.yaml");
     Files.writeString(

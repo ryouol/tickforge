@@ -41,7 +41,8 @@ public final class JdbcRunRepository implements RunRepository {
   public Metadata metadata() throws SQLException {
     try (PreparedStatement p =
         connection.prepareStatement(
-            "SELECT dataset_hash,config_hash,config_json,input_path,build_id FROM runs WHERE run_id=?")) {
+            "SELECT dataset_hash,config_hash,config_json,input_path,build_id FROM runs WHERE"
+                + " run_id=?")) {
       p.setString(1, runId);
       try (ResultSet r = p.executeQuery()) {
         if (!r.next()) throw new IllegalArgumentException("unknown run: " + runId);
@@ -64,7 +65,8 @@ public final class JdbcRunRepository implements RunRepository {
     connection.setAutoCommit(false);
     try {
       update(
-          "INSERT INTO runs(run_id,dataset_hash,config_hash,config_json,input_path,build_id,status) VALUES(?,?,?,?::jsonb,?,?,'RUNNING')",
+          "INSERT INTO runs(run_id,dataset_hash,config_hash,config_json,input_path,build_id,status)"
+              + " VALUES(?,?,?,?::jsonb,?,?,'RUNNING')",
           runId,
           manifest.sha256(),
           config.hash(),
@@ -100,45 +102,47 @@ public final class JdbcRunRepository implements RunRepository {
   public void commitBatch(BatchResult batch, EngineState state) throws SQLException {
     connection.setAutoCommit(false);
     try {
-      for (Outcome e : batch.outcomes)
-        update(
-            "INSERT INTO event_outcomes VALUES(?,?,?,?,?,?)",
-            runId,
-            e.physicalIndex(),
-            e.sequence(),
-            e.type(),
-            e.disposition(),
-            e.reason());
-      for (Order o : batch.orders.values())
-        update(
-            "INSERT INTO orders VALUES(?,?,?,?,?,?,?,?,?::jsonb) ON CONFLICT(run_id,order_id) DO UPDATE SET filled=EXCLUDED.filled,status=EXCLUDED.status,data=EXCLUDED.data",
-            runId,
-            o.id(),
-            o.symbol(),
-            o.side().name(),
-            o.quantity(),
-            o.filled(),
-            o.status().name(),
-            o.triggerIndex(),
-            Json.encode(o));
-      for (OrderEvent e : batch.transitions)
-        update(
-            "INSERT INTO order_events VALUES(?,?,?,?::jsonb)",
-            runId,
-            e.orderId(),
-            e.index(),
-            Json.encode(e));
-      for (Fill f : batch.fills)
-        update(
-            "INSERT INTO fills VALUES(?,?,?,?,?,?,?,?::jsonb)",
-            runId,
-            f.orderId(),
-            f.index(),
-            f.executionIndex(),
-            f.price(),
-            f.quantity(),
-            f.fee(),
-            Json.encode(f));
+      insertBatch(
+          "INSERT INTO event_outcomes VALUES(?,?,?,?,?,?)",
+          batch.outcomes,
+          e ->
+              new Object[] {
+                runId, e.physicalIndex(), e.sequence(), e.type(), e.disposition(), e.reason()
+              });
+      insertBatch(
+          "INSERT INTO orders VALUES(?,?,?,?,?,?,?,?,?::jsonb) ON CONFLICT(run_id,order_id) DO"
+              + " UPDATE SET filled=EXCLUDED.filled,status=EXCLUDED.status,data=EXCLUDED.data",
+          batch.orders.values(),
+          o ->
+              new Object[] {
+                runId,
+                o.id(),
+                o.symbol(),
+                o.side().name(),
+                o.quantity(),
+                o.filled(),
+                o.status().name(),
+                o.triggerIndex(),
+                Json.encode(o)
+              });
+      insertBatch(
+          "INSERT INTO order_events VALUES(?,?,?,?::jsonb)",
+          batch.transitions,
+          e -> new Object[] {runId, e.orderId(), e.index(), Json.encode(e)});
+      insertBatch(
+          "INSERT INTO fills VALUES(?,?,?,?,?,?,?,?::jsonb)",
+          batch.fills,
+          f ->
+              new Object[] {
+                runId,
+                f.orderId(),
+                f.index(),
+                f.executionIndex(),
+                f.price(),
+                f.quantity(),
+                f.fee(),
+                Json.encode(f)
+              });
       persistState(state);
       fault("before-commit", state);
       connection.commit();
@@ -158,30 +162,55 @@ public final class JdbcRunRepository implements RunRepository {
   private void persistState(EngineState s) throws SQLException {
     for (var e : s.positions.entrySet())
       update(
-          "INSERT INTO positions VALUES(?,?,?,?) ON CONFLICT(run_id,symbol) DO UPDATE SET quantity=EXCLUDED.quantity,cost_ticks=EXCLUDED.cost_ticks",
+          "INSERT INTO positions VALUES(?,?,?,?) ON CONFLICT(run_id,symbol) DO UPDATE SET"
+              + " quantity=EXCLUDED.quantity,cost_ticks=EXCLUDED.cost_ticks WHERE"
+              + " (positions.quantity,positions.cost_ticks) IS DISTINCT FROM"
+              + " (EXCLUDED.quantity,EXCLUDED.cost_ticks)",
           runId,
           e.getKey(),
           e.getValue().quantity(),
           e.getValue().costTicks());
     update(
-        "INSERT INTO account_state VALUES(?,?,?) ON CONFLICT(run_id) DO UPDATE SET cash_ticks=EXCLUDED.cash_ticks,fees_ticks=EXCLUDED.fees_ticks",
+        "INSERT INTO account_state VALUES(?,?,?) ON CONFLICT(run_id) DO UPDATE SET"
+            + " cash_ticks=EXCLUDED.cash_ticks,fees_ticks=EXCLUDED.fees_ticks WHERE"
+            + " (account_state.cash_ticks,account_state.fees_ticks) IS DISTINCT FROM"
+            + " (EXCLUDED.cash_ticks,EXCLUDED.fees_ticks)",
         runId,
         s.cash,
         s.fees);
     update(
-        "INSERT INTO checkpoints VALUES(?,?,?,?::jsonb,?) ON CONFLICT(run_id) DO UPDATE SET next_index=EXCLUDED.next_index,state=EXCLUDED.state,finalized=EXCLUDED.finalized",
+        "INSERT INTO checkpoints VALUES(?,?,?,?::jsonb,?) ON CONFLICT(run_id) DO UPDATE SET"
+            + " next_index=EXCLUDED.next_index,state=EXCLUDED.state,finalized=EXCLUDED.finalized",
         runId,
         s.nextIndex,
         s.version,
         Json.encode(s),
         s.finalized);
-    update("UPDATE runs SET status=? WHERE run_id=?", s.finalized ? "COMPLETE" : "RUNNING", runId);
+    if (s.finalized)
+      update("UPDATE runs SET status='COMPLETE' WHERE run_id=? AND status<>'COMPLETE'", runId);
+  }
+
+  private static void bind(PreparedStatement statement, Object[] args) throws SQLException {
+    for (int i = 0; i < args.length; i++) statement.setObject(i + 1, args[i]);
+  }
+
+  private <T> void insertBatch(
+      String sql, Collection<T> values, java.util.function.Function<T, Object[]> parameters)
+      throws SQLException {
+    if (values.isEmpty()) return;
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      for (T value : values) {
+        bind(statement, parameters.apply(value));
+        statement.addBatch();
+      }
+      statement.executeBatch();
+    }
   }
 
   private void update(String sql, Object... args) throws SQLException {
-    try (PreparedStatement p = connection.prepareStatement(sql)) {
-      for (int i = 0; i < args.length; i++) p.setObject(i + 1, args[i]);
-      p.executeUpdate();
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      bind(statement, args);
+      statement.executeUpdate();
     }
   }
 
@@ -204,62 +233,83 @@ public final class JdbcRunRepository implements RunRepository {
     }
   }
 
-  public String canonicalReport() throws SQLException {
+  public String canonicalReport() throws SQLException, IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    writeCanonicalReport(out);
+    return out.toString(java.nio.charset.StandardCharsets.UTF_8);
+  }
+
+  public void writeCanonicalReport(OutputStream output) throws SQLException, IOException {
     connection.setAutoCommit(false);
     connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
-    try {
-      Map<String, Object> report = new TreeMap<>();
-      report.put("state", load());
-      report.put(
-          "outcomes",
-          rows(
-              "SELECT physical_index,sequence,type,disposition,reason FROM event_outcomes WHERE run_id=? ORDER BY physical_index"));
-      report.put(
-          "orders",
-          jsonRows("SELECT data FROM orders WHERE run_id=? ORDER BY trigger_index,order_id"));
-      report.put(
-          "transitions",
-          jsonRows(
-              "SELECT e.data FROM order_events e JOIN orders o USING(run_id,order_id) WHERE e.run_id=? ORDER BY o.trigger_index,e.transition_index"));
-      report.put(
+    try (var json = Json.MAPPER.getFactory().createGenerator(output)) {
+      json.disable(com.fasterxml.jackson.core.JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+      json.writeStartObject();
+      writeRows(
+          json, "account", "SELECT cash_ticks,fees_ticks FROM account_state WHERE run_id=?", false);
+      writeRows(
+          json,
           "fills",
-          jsonRows(
-              "SELECT data FROM fills WHERE run_id=? ORDER BY execution_index,order_id,fill_index"));
-      String result = Json.encode(report);
+          "SELECT data FROM fills WHERE run_id=? ORDER BY execution_index,order_id,fill_index",
+          true);
+      writeRows(
+          json,
+          "orders",
+          "SELECT data FROM orders WHERE run_id=? ORDER BY trigger_index,order_id",
+          true);
+      writeRows(
+          json,
+          "outcomes",
+          "SELECT physical_index,sequence,type,disposition,reason FROM event_outcomes WHERE"
+              + " run_id=? ORDER BY physical_index",
+          false);
+      writeRows(
+          json,
+          "positions",
+          "SELECT symbol,quantity,cost_ticks FROM positions WHERE run_id=? ORDER BY symbol",
+          false);
+      json.writeObjectField("state", load());
+      writeRows(
+          json,
+          "transitions",
+          "SELECT e.data FROM order_events e JOIN orders o USING(run_id,order_id) WHERE e.run_id=?"
+              + " ORDER BY o.trigger_index,e.transition_index",
+          true);
+      json.writeEndObject();
+      json.flush();
       connection.commit();
-      return result;
-    } catch (SQLException | RuntimeException e) {
-      connection.rollback();
+    } catch (SQLException | IOException | RuntimeException e) {
+      try {
+        connection.rollback();
+      } catch (SQLException rollback) {
+        e.addSuppressed(rollback);
+      }
       throw e;
     } finally {
       connection.setAutoCommit(true);
     }
   }
 
-  private List<Object> jsonRows(String sql) throws SQLException {
-    List<Object> result = new ArrayList<>();
-    try (PreparedStatement p = connection.prepareStatement(sql)) {
-      p.setString(1, runId);
-      try (ResultSet r = p.executeQuery()) {
-        while (r.next()) result.add(Json.decode(r.getString(1), Object.class));
-      }
-    }
-    return result;
-  }
-
-  private List<Object> rows(String sql) throws SQLException {
-    List<Object> result = new ArrayList<>();
-    try (PreparedStatement p = connection.prepareStatement(sql)) {
-      p.setString(1, runId);
-      try (ResultSet r = p.executeQuery()) {
-        while (r.next()) {
-          List<Object> row = new ArrayList<>();
-          for (int i = 1; i <= r.getMetaData().getColumnCount(); i++) row.add(r.getObject(i));
-          result.add(row);
+  private void writeRows(
+      com.fasterxml.jackson.core.JsonGenerator json, String name, String sql, boolean encodedJson)
+      throws SQLException, IOException {
+    json.writeArrayFieldStart(name);
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, runId);
+      statement.setFetchSize(1000);
+      try (ResultSet result = statement.executeQuery()) {
+        int columns = result.getMetaData().getColumnCount();
+        while (result.next()) {
+          if (encodedJson) json.writeObject(Json.decode(result.getString(1), Object.class));
+          else {
+            json.writeStartArray();
+            for (int i = 1; i <= columns; i++) json.writeObject(result.getObject(i));
+            json.writeEndArray();
+          }
         }
       }
     }
-    return result;
+    json.writeEndArray();
   }
 
   @Override

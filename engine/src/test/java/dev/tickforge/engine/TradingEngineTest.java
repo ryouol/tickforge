@@ -189,4 +189,74 @@ class TradingEngineTest {
     assertEquals(4, e.state().positions.get("TEST_B").quantity());
     assertTrue(e.state().pending.isEmpty());
   }
+
+  @Test
+  void nonzeroLatencyWaitsUntilEligibility() {
+    var c = config();
+    var delayed =
+        new RunConfig(
+            c.initialCash(),
+            c.feePerShare(),
+            c.orderQuantity(),
+            c.maxOrderQuantity(),
+            c.maxPosition(),
+            c.quoteFreshnessNs(),
+            10,
+            c.timeoutNs(),
+            c.buySlippageTicks(),
+            false,
+            false,
+            c.symbols());
+    var e = new TradingEngine(delayed, new EngineState(c.initialCash()));
+    var rows =
+        List.of(
+            "1,1,TEST_A,QUOTE,99,20,101,20,,",
+            "2,2,TEST_A,TRADE,,,,,100,10",
+            "3,11,TEST_A,QUOTE,99,20,101,20,,");
+    for (int i = 0; i < rows.size(); i++)
+      e.process(CsvEventReader.parse(i + 1, rows.get(i), c.symbols().keySet()));
+    assertEquals(0, e.state().fillCount);
+    assertEquals(1, e.state().pending.size());
+    e.process(CsvEventReader.parse(4, "4,12,TEST_A,QUOTE,99,20,101,20,,", c.symbols().keySet()));
+    assertEquals(1, e.state().fillCount);
+    assertTrue(e.state().pending.isEmpty());
+  }
+
+  @Test
+  void strictMalformedInputDoesNotAdvanceCheckpoint() {
+    row("1,1,TEST_A,QUOTE,99,20,101,20,,");
+    assertThrows(IllegalArgumentException.class, () -> row("malformed"));
+    assertEquals(2, engine.state().nextIndex);
+    assertEquals(1, engine.state().lastSequence);
+    assertEquals(1, engine.batch().outcomes.size());
+  }
+
+  @Test
+  void acceptanceLimitsRejectWithoutFinancialChanges() {
+    assertRejected(
+        new RunConfig(100000, 2, 10, 9, 20, 100, 0, 1000, 5, false, false, config().symbols()),
+        "MAX_ORDER_QUANTITY");
+    assertRejected(
+        new RunConfig(100000, 2, 10, 20, 9, 100, 0, 1000, 5, false, false, config().symbols()),
+        "POSITION_LIMIT");
+    assertRejected(
+        new RunConfig(1079, 2, 10, 20, 20, 100, 0, 1000, 5, false, false, config().symbols()),
+        "INSUFFICIENT_CASH");
+    var c = new RunConfig(1080, 2, 10, 20, 20, 100, 0, 1000, 5, false, false, config().symbols());
+    var e = new TradingEngine(c, new EngineState(c.initialCash()));
+    e.process(CsvEventReader.parse(1, "1,1,TEST_A,QUOTE,99,20,101,20,,", c.symbols().keySet()));
+    e.process(CsvEventReader.parse(2, "2,2,TEST_A,TRADE,,,,,100,10", c.symbols().keySet()));
+    assertEquals(1, e.state().pending.size());
+  }
+
+  private void assertRejected(RunConfig c, String reason) {
+    var e = new TradingEngine(c, new EngineState(c.initialCash()));
+    e.process(CsvEventReader.parse(1, "1,1,TEST_A,QUOTE,99,20,101,20,,", c.symbols().keySet()));
+    e.process(CsvEventReader.parse(2, "2,2,TEST_A,TRADE,,,,,100,10", c.symbols().keySet()));
+    assertEquals(reason, e.batch().transitions.getLast().reason());
+    assertTrue(e.state().pending.isEmpty());
+    assertEquals(c.initialCash(), e.state().cash);
+    assertEquals(0, e.state().fees);
+    assertTrue(e.state().positions.isEmpty());
+  }
 }

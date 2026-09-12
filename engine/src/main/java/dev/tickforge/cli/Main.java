@@ -59,6 +59,16 @@ public final class Main {
       return;
     }
     String run = required(options, "run-id");
+    if (command.equals("report")) {
+      if (!options.getOrDefault("format", "json").equals("json"))
+        throw new IllegalArgumentException("only JSON report format is supported");
+      try (var repository = new JdbcRunRepository(connect(), run)) {
+        repository.writeCanonicalReport(System.out);
+        System.out.println();
+        if (System.out.checkError()) throw new java.io.IOException("report output failed");
+      }
+      return;
+    }
     var metrics = new Metrics();
     AtomicBoolean stop = new AtomicBoolean();
     CountDownLatch finished = new CountDownLatch(1);
@@ -77,12 +87,6 @@ public final class Main {
     try (var status =
             new StatusServer(Integer.parseInt(options.getOrDefault("port", "0")), metrics);
         var repo = new JdbcRunRepository(connect(), run)) {
-      if (command.equals("report")) {
-        if (!options.getOrDefault("format", "json").equals("json"))
-          throw new IllegalArgumentException("only JSON report format is supported");
-        System.out.println(repo.canonicalReport());
-        return;
-      }
       boolean resume = command.equals("resume");
       var metadata = resume ? repo.metadata() : null;
       Path input =
@@ -103,6 +107,7 @@ public final class Main {
               Double.parseDouble(options.getOrDefault("speed", "0")));
       var engine = new TradingEngine(config, repo.initialize(input, manifest, config, resume));
       if (resume) metrics.recoveries.incrementAndGet();
+      metrics.committedState(engine.state());
       status.publish(Json.encode(engine.state()));
       status.ready.set(true);
       System.err.println(

@@ -23,6 +23,6 @@ A repeated/lower feed sequence is audited and ignored. A forward gap fails befor
 
 Format v1 requires one physical line per CSV record, an exact header, a maximum of 16,384 characters per record, and no embedded newlines. Oversized records and unreadable UTF-8 are fatal transport errors in all modes. Record count is checked at EOF; the immutable input's exact bytes are hashed before replay. Do not modify input while a run is reading it. Resume revalidates its hash.
 
-Complete snapshots contain sequence/time, quotes, pending orders, positions/costs, cash, fees, counters, next physical index and finalization. No ledger-history arrays are retained in engine memory. Reports intentionally load full histories; use them for bounded demonstration datasets, not unlimited production exports.
+Complete snapshots contain sequence/time, quotes, pending orders, positions/costs, cash, fees, counters, next physical index and finalization. No ledger-history arrays are retained in engine memory. CLI reports stream full histories through a PostgreSQL cursor with bounded fetch size. The string-returning repository helper is reserved for tiny test comparisons.
 
 Dependencies: [Commons CSV](https://commons.apache.org/proper/commons-csv/), [PostgreSQL session advisory locks](https://www.postgresql.org/docs/current/explicit-locking.html#ADVISORY-LOCKS), [Testcontainers PostgreSQL](https://java.testcontainers.org/modules/databases/postgres/).

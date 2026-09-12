@@ -8,8 +8,4 @@ public final class BatchResult {
   public final List<OrderEvent> transitions = new ArrayList<>();
   public final List<Fill> fills = new ArrayList<>();
   public final Map<String, Order> orders = new LinkedHashMap<>();
-
-  public boolean isEmpty() {
-    return outcomes.isEmpty() && transitions.isEmpty();
-  }
 }

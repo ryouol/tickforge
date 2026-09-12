@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import platform
 import subprocess
+import tempfile
 import time
 import uuid
 
@@ -56,8 +57,13 @@ for ordinal, (batch, queue, speed) in enumerate([cases[1]] + cases * args.repeat
     (args.output / f"{ordinal:02d}.stderr.jsonl").write_text(process.stderr)
     process.check_returncode()
     result = json.loads(process.stdout)
-    report = subprocess.run(base + ["report", "--run-id", run_id], check=True, stdout=subprocess.PIPE).stdout
-    checksum = hashlib.sha256(report.strip()).hexdigest()
+    with tempfile.TemporaryFile() as report:
+        subprocess.run(base + ["report", "--run-id", run_id], check=True, stdout=report)
+        report.seek(0)
+        digest = hashlib.sha256()
+        while chunk := report.read(65536):
+            digest.update(chunk)
+        checksum = digest.hexdigest()
     if expected is None:
         expected = checksum
     if checksum != expected:

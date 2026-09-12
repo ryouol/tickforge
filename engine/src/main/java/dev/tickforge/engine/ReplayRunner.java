@@ -55,7 +55,8 @@ public final class ReplayRunner {
     try {
       while (!stop.get()) {
         Message message = queue.poll(100, TimeUnit.MILLISECONDS);
-        metrics.queueDepth.set(queue.size());
+        metrics.observeDepth(queue.size());
+        if (stop.get()) break;
         if (message == null) continue;
         if (message.failure != null) throw message.failure;
         if (message.eof) {
@@ -66,6 +67,7 @@ public final class ReplayRunner {
         long start = System.nanoTime();
         metrics.record("queue_wait", start - message.admitted);
         engine.process(message.event);
+        metrics.processedIndex.set(message.event.index());
         metrics.record("engine", System.nanoTime() - start);
         batch.add(message);
         if (batch.size() == options.batchSize()) commit(engine, repository, publish, batch);
@@ -94,8 +96,11 @@ public final class ReplayRunner {
         count = e.index();
         if (count < next) continue;
         metrics.parsed.incrementAndGet();
-        long scheduled = scheduler.await(e.event() == null ? 0 : e.event().time(), stop);
+        long scheduled =
+            e.event() == null ? System.nanoTime() : scheduler.await(e.event().time(), stop);
+        if (stop.get()) break;
         long admitted = System.nanoTime();
+        metrics.admitted(admitted);
         metrics.record("schedule_lateness", admitted - scheduled);
         offer(queue, new Message(e, null, false, admitted, scheduled));
       }
@@ -118,7 +123,7 @@ public final class ReplayRunner {
   private void offer(ArrayBlockingQueue<Message> queue, Message message)
       throws InterruptedException {
     if (queue.offer(message)) {
-      metrics.queueDepth.set(queue.size());
+      metrics.observeDepth(queue.size());
       return;
     }
     long start = System.nanoTime();
@@ -126,7 +131,7 @@ public final class ReplayRunner {
       while (!stop.get()) if (queue.offer(message, 100, TimeUnit.MILLISECONDS)) return;
     } finally {
       metrics.blockedNs.addAndGet(System.nanoTime() - start);
-      metrics.queueDepth.set(queue.size());
+      metrics.observeDepth(queue.size());
     }
   }
 
@@ -147,6 +152,7 @@ public final class ReplayRunner {
       metrics.record("scheduled_to_commit", now - message.scheduled);
     }
     metrics.committed.addAndGet(batch.size());
+    metrics.committedState(engine.state());
     publish.accept(Json.encode(engine.state()));
     engine.committed();
     batch.clear();
