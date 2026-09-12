@@ -3,6 +3,7 @@ WORKDIR /app
 COPY .mvn .mvn
 COPY mvnw pom.xml ./
 COPY engine engine
+COPY benchmarks benchmarks
 RUN ./mvnw -B -ntp -DskipTests -DskipITs package
 FROM eclipse-temurin:21.0.9_10-jre
 WORKDIR /app
