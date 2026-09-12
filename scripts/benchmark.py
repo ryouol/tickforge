@@ -31,7 +31,8 @@ def output(command):
 
 metadata = {
     "os": platform.platform(), "architecture": platform.machine(),
-    "cpu": output(["sysctl", "-n", "machdep.cpu.brand_string"]) if platform.system() == "Darwin" else platform.processor(),
+    "cpu": output(["sysctl", "-n", "machdep.cpu.brand_string"]) if platform.system() == "Darwin" else next((line.split(":", 1)[1].strip() for line in Path("/proc/cpuinfo").read_text().splitlines() if line.startswith("model name")), platform.processor()),
+    "logicalCpus": os.cpu_count(), "memoryBytes": os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES"),
     "java": output([java, "-version"]), "gitCommit": output(["git", "rev-parse", "HEAD"]),
     "workingTree": output(["git", "status", "--porcelain"]),
     "buildSha256": hashlib.sha256(jar.read_bytes()).hexdigest(),
