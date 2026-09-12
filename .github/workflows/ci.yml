@@ -1,0 +1,33 @@
+name: verify
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21.0.9+10'
+          cache: maven
+      - run: ./mvnw -B -ntp spotless:check verify
+      - name: Docker smoke replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          TICKFORGE_DB_PASSWORD="$(openssl rand -hex 24)"
+          export TICKFORGE_DB_PASSWORD
+          docker compose up -d --wait db
+          trap 'docker compose down -v' EXIT
+          docker build -t tickforge:ci .
+          mkdir -p data
+          java -jar engine/target/engine-1.0.0-SNAPSHOT.jar generate --events 100 --output data/ci.csv
+          docker run --rm --network host -v "$PWD/data:/data:ro" -e TICKFORGE_DB_PASSWORD -e TICKFORGE_DB_URL=jdbc:postgresql://localhost:55432/tickforge tickforge:ci replay --input /data/ci.csv --run-id ci-smoke
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: '**/target/*-reports/'
