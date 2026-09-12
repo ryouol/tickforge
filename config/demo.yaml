@@ -1,0 +1,14 @@
+initialCash: 1000000000
+feePerShare: 10
+orderQuantity: 10
+maxOrderQuantity: 100
+maxPosition: 100
+quoteFreshnessNs: 1000000000
+latencyNs: 0
+timeoutNs: 5000000000
+buySlippageTicks: 200
+quarantineMalformed: false
+tolerateGaps: false
+symbols:
+  TEST_A: {entry: 1000000, exit: 1002000}
+  TEST_B: {entry: 1000000, exit: 1002000}
