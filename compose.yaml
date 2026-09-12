@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_USER: tickforge
+      POSTGRES_DB: tickforge
+      POSTGRES_PASSWORD: ${TICKFORGE_DB_PASSWORD:?Set TICKFORGE_DB_PASSWORD in your environment or .env}
+    ports: ["127.0.0.1:${TICKFORGE_DB_PORT:-55432}:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tickforge -d tickforge"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    volumes: ["tickforge-db:/var/lib/postgresql/data"]
+volumes:
+  tickforge-db:
