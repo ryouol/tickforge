@@ -10,7 +10,7 @@ import java.sql.*;
 import java.util.*;
 
 public final class JdbcRunRepository implements RunRepository {
-  public static final String BUILD_ID = "tickforge-1";
+  public static final String BUILD_ID = BuildIdentity.current();
   private final Connection connection;
   private final String runId;
 
