@@ -1,8 +1,18 @@
 # TickForge
 
+[![Verify](https://github.com/ryouol/tickforge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ryouol/tickforge/actions/workflows/ci.yml)
+
 A Java 21 market-data replay and paper-execution engine with transactionally checkpointed PostgreSQL recovery.
 
 **Synthetic data. Simulated orders. No live trading, account credentials, or investment claims.** The project demonstrates deterministic state transitions, bounded concurrency, database failure handling, and reproducible measurement.
+
+## Engineering review
+
+Start with the [reviewer guide](docs/reviewer-guide.md) for a paced local walkthrough, source-reading order, verification evidence, and review questions.
+
+![Running locally: committed state from the status endpoint](docs/screenshots/local-status.png)
+
+The capture shows the actual JSON endpoint; the [guide](docs/reviewer-guide.md#screenshots) records its provenance.
 
 ## Quick start
 

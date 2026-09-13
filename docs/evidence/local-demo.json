@@ -1,0 +1,119 @@
+{
+  "capturedAt": "2026-09-13T03:02:24.009741+00:00",
+  "runId": "review-demo-20260912-225952",
+  "sourceCommit": "268def8adbee136f7172d5dc9aaa67c79faae8c3",
+  "seed": 42,
+  "events": 180000,
+  "speed": 0.5,
+  "batchSize": 100,
+  "queueCapacity": 1024,
+  "ready": {
+    "ready": true
+  },
+  "progressCheck": {
+    "fromNextIndex": 7301,
+    "toNextIndex": 7501
+  },
+  "status": {
+    "version": 1,
+    "nextIndex": 7501,
+    "lastSequence": 7500,
+    "lastTime": 75000000000,
+    "cash": 1013212480,
+    "fees": 136320,
+    "fillCount": 2119,
+    "rejections": 0,
+    "duplicates": 0,
+    "quarantined": 0,
+    "finalized": false,
+    "quotes": {
+      "TEST_A": {
+        "sequence": 7499,
+        "time": 74990000000,
+        "symbol": "TEST_A",
+        "bid": 1002900,
+        "bidSize": 11,
+        "ask": 1003100,
+        "askSize": 12
+      },
+      "TEST_B": {
+        "sequence": 7495,
+        "time": 74950000000,
+        "symbol": "TEST_B",
+        "bid": 998900,
+        "bidSize": 6,
+        "ask": 999100,
+        "askSize": 8
+      }
+    },
+    "positions": {
+      "TEST_A": {
+        "quantity": 0,
+        "costTicks": 0
+      },
+      "TEST_B": {
+        "quantity": 8,
+        "costTicks": 7992880
+      }
+    },
+    "pending": {}
+  },
+  "metrics": {
+    "actualOfferedPerSecond": 49.99964301019513,
+    "admission_to_commitNs": {
+      "count": 7500,
+      "max": 2131755007,
+      "p50": 1034944511,
+      "p95": 1934622719,
+      "p99": 2014314495
+    },
+    "commitFailures": 0,
+    "commitNs": {
+      "count": 75,
+      "max": 151912447,
+      "p50": 43352063,
+      "p95": 65110015,
+      "p99": 151912447
+    },
+    "committed": 7500,
+    "duplicates": 0,
+    "engineNs": {
+      "count": 7521,
+      "max": 142344191,
+      "p50": 19215,
+      "p95": 80383,
+      "p99": 152063
+    },
+    "fills": 2119,
+    "lastCommittedIndex": 7500,
+    "parsed": 7522,
+    "processedIndex": 7521,
+    "producerBlockedNs": 0,
+    "quarantined": 0,
+    "queueDepth": 0,
+    "queueHighWatermark": 8,
+    "queue_waitNs": {
+      "count": 7521,
+      "max": 128450559,
+      "p50": 44863,
+      "p95": 745983,
+      "p99": 19333119
+    },
+    "recoveries": 0,
+    "rejectedOrders": 0,
+    "schedule_latenessNs": {
+      "count": 7522,
+      "max": 146669567,
+      "p50": 1500159,
+      "p95": 2154495,
+      "p99": 5836799
+    },
+    "scheduled_to_commitNs": {
+      "count": 7500,
+      "max": 2133852159,
+      "p50": 1035993087,
+      "p95": 1936719871,
+      "p99": 2017460223
+    }
+  }
+}
